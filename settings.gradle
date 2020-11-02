@@ -1,0 +1,3 @@
+include ':ethereum-client-sdk'
+include ':app'
+rootProject.name = "Ethereum Client SDK"
