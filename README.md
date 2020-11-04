@@ -28,8 +28,8 @@ allprojects {
     }
 }
 ```
-### Adding Ethereum SDK as a Maven Dependency
-Maven:
+### Adding Ethereum SDK as a Maven or Gradle Dependency
+For “Maven” add this dependency to your module
 
 ```xml
 <dependency>
@@ -39,7 +39,7 @@ Maven:
 </dependency>
 ```
 
-Gradle:
+For “Gradle” add this dependency to your module:
 
 ```groovy
 dependencies {
