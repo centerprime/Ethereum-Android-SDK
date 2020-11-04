@@ -29,7 +29,7 @@ allprojects {
 }
 ```
 ### Adding Ethereum SDK as a Maven or Gradle Dependency
-For “Maven” add this dependency to your module
+For “Maven” add this dependency to your module:
 
 ```xml
 <dependency>
@@ -108,7 +108,7 @@ ethManager.createWallet(password, this)
 
 ### Import Wallet By Keystore
 
-> Import Ethereum Walley by Keystore.
+> Import Ethereum Wallet by Keystore.
 
 ```java
 EthManager ethManager = EthManager.getInstance();
