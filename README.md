@@ -34,8 +34,8 @@ For “Maven” add this dependency to your module:
 ```xml
 <dependency>
 	    <groupId>com.github.centerprime</groupId>
-	    <artifactId>ethereum-client</artifactId>
-	    <version>1.0.4</version>
+	    <artifactId>Ethereum-Client-SDK</artifactId>
+	    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ For “Gradle” add this dependency to your module:
 
 ```groovy
 dependencies {
-    implementation 'com.github.centerprime:ethereum-client:1.0.4'
+    implementation 'com.github.centerprime:Ethereum-Client-SDK:1.0.0'
 }
 ```
 
