@@ -8,6 +8,7 @@ import com.centerprime.ethereum_client_sdk.util.Const;
 import com.centerprime.ethereum_client_sdk.util.Erc20TokenWrapper;
 import com.centerprime.ethereum_client_sdk.util.HyperLedgerApi;
 import com.centerprime.ethereum_client_sdk.util.SubmitTransactionModel;
+import com.centerprime.ethereum_client_sdk.util.Wallet;
 
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Address;
@@ -113,14 +114,18 @@ public class EthManager {
     /**
      * Create Wallet by password
      */
-    public Single<String> createWallet(String password, Context context) {
+    public Single<Wallet> createWallet(String password, Context context) {
         return Single.fromCallable(() -> {
             try {
                 HashMap<String, Object> body = new HashMap<>();
                 body.put("action_type", "WALLET_CREATE");
                 body.put("message", "Test");
                 sendEventToLedger(body);
-                return CenterPrimeUtils.generateNewWalletFile(password, new File(context.getFilesDir(), ""), false);
+                String walletAddress = CenterPrimeUtils.generateNewWalletFile(password, new File(context.getFilesDir(), ""), false);
+                String walletPath = context.getFilesDir() + "/" + walletAddress.toLowerCase();
+                File keystoreFile = new File(walletPath);
+                String keystore = read_file(context, keystoreFile.getName());
+                return new Wallet(walletAddress, keystore);
             } catch (CipherException | IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
                 e.printStackTrace();
             }

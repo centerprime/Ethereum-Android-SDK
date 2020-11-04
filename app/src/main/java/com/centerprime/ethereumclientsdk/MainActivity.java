@@ -21,10 +21,9 @@ import io.reactivex.schedulers.Schedulers;
         ethManager.createWallet(password, this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(walletAddress -> {
-
-                    Toast.makeText(this, "Wallet Address : " + walletAddress, Toast.LENGTH_SHORT).show();
-
+                .subscribe(wallet -> {
+                    String walletAddress = wallet.getAddress();
+                    String keystore = wallet.getKeystore();
                 }, error -> {
 
                 });
