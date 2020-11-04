@@ -4,7 +4,7 @@
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-  - [Adding Ethereum SDK as a Maven Dependency](#adding-ethereum-sdk-as-a-maven-dependency)
+  - [Adding Ethereum SDK as a Maven or Gradle Dependency](#adding-ethereum-sdk-as-a-maven-or-gradle-dependency)
   - [Basic Usage](#basic-usage)
 - [Features at a Glance](#features-at-a-glance)
   - [Create Wallet](#create-wallet)
