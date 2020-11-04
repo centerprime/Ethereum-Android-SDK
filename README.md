@@ -108,7 +108,7 @@ ethManager.createWallet(password, this)
 
 ### Import Wallet By Keystore
 
-> Import Ethereum Wallet by Keystore.
+> To import Ethereum wallet by keystore you can use a code written below: 
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -127,7 +127,7 @@ ethManager.importFromKeystore(keystore, password, this)
 ```
 ### Import Wallet By Private Key
 
-> Import Wallet By Private Key.
+> To import Ethereum wallet by private key you can use a code written below:
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -146,7 +146,7 @@ ethManager.importFromPrivateKey(privateKey, this)
 
 ### Export Keystore
 
-> Export Keystore.
+> If you want to export wallet address’s keystore you can use a code written below
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -165,7 +165,7 @@ ethManager.getKeyStore(walletAddress, this)
 
 ### Export Private Key
 
-> Export Private Key.
+> If you want to export wallet address’s private key you can use a code written below
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -185,7 +185,7 @@ ethManager.exportPrivateKey(walletAddress, password,this)
 
 ### Ethereum Balance
 
-> Ethereum Balance.
+> To get balance of Ethereum wallet address you can use this code:
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -203,7 +203,7 @@ ethManager.balanceInEth(walletAddress)
 ```
 ### ERC20 token balance
 
-> ERC20 token balance.
+> To get balance of ERC20 token you can use this code:
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -224,7 +224,7 @@ ethManager.getTokenBalance(walletAddress, password, erc20TokenContractAddress, t
 
 ### Send Ether
 
-> Send Ether.
+> To send Ethereum to another wallet address you can use this code:
 
 ```java
 EthManager ethManager = EthManager.getInstance();
@@ -247,7 +247,7 @@ ethManager.sendEther(walletAddress, password,gasPrice,gasLimit,etherAmount, rece
 ```
 ### Send ERC20 token
 
-> Send ERC20 token.
+> To send ERC20 Token to another wallet address you can use this code:
 
 ```java
 EthManager ethManager = EthManager.getInstance();
