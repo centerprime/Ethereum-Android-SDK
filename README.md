@@ -34,8 +34,8 @@ For “Maven” add this dependency to your module:
 ```xml
 <dependency>
 	    <groupId>com.github.centerprime</groupId>
-	    <artifactId>ethereum-client</artifactId>
-	    <version>1.0.4</version>
+	    <artifactId>Ethereum-Client-SDK</artifactId>
+	    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ For “Gradle” add this dependency to your module:
 
 ```groovy
 dependencies {
-    implementation 'com.github.centerprime:ethereum-client:1.0.4'
+    implementation 'com.github.centerprime:Ethereum-Client-SDK:1.0.0'
 }
 ```
 
@@ -73,10 +73,9 @@ public class MainActivity extends AppCompatActivity {
         ethManager.createWallet(password, this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(walletAddress -> {
-
-                    Toast.makeText(this, "Wallet Address : " + walletAddress, Toast.LENGTH_SHORT).show();
-
+                .subscribe(wallet -> {
+                    String walletAddress = wallet.getAddress();
+                    String keystore = wallet.getKeystore();
                 }, error -> {
 
                 });
@@ -97,10 +96,9 @@ String password = "xxxx12345";
 ethManager.createWallet(password, this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(walletAddress -> {
-
-                    Toast.makeText(this, "Wallet Address : " + walletAddress, Toast.LENGTH_SHORT).show();
-
+                .subscribe(wallet -> {
+                    String walletAddress = wallet.getAddress();
+                    String keystore = wallet.getKeystore();
                 }, error -> {
 
                 });
