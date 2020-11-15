@@ -354,6 +354,7 @@ public class EthManager {
                     body.put("gasLimit", gasLimit.toString());
                     body.put("gasPrice", gasPrice.toString());
                     body.put("fee", gasLimit.multiply(gasPrice).toString());
+                    body.put("token_smart_contract", tokenContractAddress);
                     body.put("status", "SUCCESS");
                     sendEventToLedger(body);
 
