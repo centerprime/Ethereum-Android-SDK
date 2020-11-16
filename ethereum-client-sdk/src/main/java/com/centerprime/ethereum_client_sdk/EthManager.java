@@ -197,7 +197,7 @@ public class EthManager {
                 body.put("action_type", "WALLET_IMPORT_PRIVATE_KEY");
                 body.put("wallet_address", walletAddress);
                 body.put("status", "SUCCESS");
-
+                sendEventToLedger(body);
                 return walletAddress;
             } catch (CipherException | IOException e) {
                 e.printStackTrace();
