@@ -117,19 +117,24 @@ public class EthManager {
      */
     public Single<Wallet> createWallet(String password, Context context) {
         return Single.fromCallable(() -> {
+            HashMap<String, Object> body = new HashMap<>();
             try {
-                HashMap<String, Object> body = new HashMap<>();
-                body.put("action_type", "WALLET_CREATE");
-                body.put("message", "Test");
-                sendEventToLedger(body);
+
                 String walletAddress = CenterPrimeUtils.generateNewWalletFile(password, new File(context.getFilesDir(), ""), false);
                 String walletPath = context.getFilesDir() + "/" + walletAddress.toLowerCase();
                 File keystoreFile = new File(walletPath);
                 String keystore = read_file(context, keystoreFile.getName());
+
+                body.put("action_type", "WALLET_CREATE");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "SUCCESS");
+                sendEventToLedger(body);
                 return new Wallet(walletAddress, keystore);
             } catch (CipherException | IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
                 e.printStackTrace();
+                body.put("status", "FAILURE");
             }
+            sendEventToLedger(body);
             return null;
         });
     }
@@ -139,23 +144,17 @@ public class EthManager {
      */
     public Single<String> getKeyStore(String walletAddress, Context context) {
         return Single.fromCallable(() -> {
-            String wallet  = walletAddress;
-            try {
-                if (wallet.startsWith("0x")) {
-                    wallet = wallet.substring(2);
-                }
-                String walletPath = context.getFilesDir() + "/" + wallet.toLowerCase();
-                File keystoreFile = new File(walletPath);
-                if (keystoreFile.exists()) {
-                    return read_file(context, keystoreFile.getName());
-                } else {
-                    return null;
-                }
-            } catch (Exception e){
-                e.printStackTrace();
+            String wallet = walletAddress;
+            if (wallet.startsWith("0x")) {
+                wallet = wallet.substring(2);
             }
-
-            return null;
+            String walletPath = context.getFilesDir() + "/" + wallet.toLowerCase();
+            File keystoreFile = new File(walletPath);
+            if (keystoreFile.exists()) {
+                return read_file(context, keystoreFile.getName());
+            } else {
+                throw new Exception("Keystore is NULL");
+            }
         });
     }
 
@@ -164,19 +163,21 @@ public class EthManager {
      */
     public Single<String> importFromKeystore(String keystore, String password, Context context) {
         return Single.fromCallable(() -> {
+            HashMap<String, Object> body = new HashMap<>();
             try {
                 Credentials credentials = CenterPrimeUtils.loadCredentials(password, keystore);
                 String walletAddress = CenterPrimeUtils.generateWalletFile(password, credentials.getEcKeyPair(), new File(context.getFilesDir(), ""), false);
 
-                HashMap<String, Object> body = new HashMap<>();
                 body.put("action_type", "WALLET_IMPORT_KEYSTORE");
-                body.put("message", "TEST");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "SUCCESS");
                 sendEventToLedger(body);
-
                 return walletAddress;
             } catch (IOException e) {
+                body.put("status", "FAILURE");
                 e.printStackTrace();
             }
+            sendEventToLedger(body);
             return null;
         });
     }
@@ -186,6 +187,7 @@ public class EthManager {
      */
     public Single<String> importFromPrivateKey(String privateKey, Context context) {
         return Single.fromCallable(() -> {
+            HashMap<String, Object> body = new HashMap<>();
             String password = "";
             // Decode private key
             ECKeyPair keys = ECKeyPair.create(Hex.decode(privateKey));
@@ -193,15 +195,16 @@ public class EthManager {
                 Credentials credentials = Credentials.create(keys);
                 String walletAddress = CenterPrimeUtils.generateWalletFile(password, credentials.getEcKeyPair(), new File(context.getFilesDir(), ""), false);
 
-                HashMap<String, Object> body = new HashMap<>();
                 body.put("action_type", "WALLET_IMPORT_PRIVATE_KEY");
-                body.put("message", "TEST");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "SUCCESS");
                 sendEventToLedger(body);
-
                 return walletAddress;
             } catch (CipherException | IOException e) {
                 e.printStackTrace();
+                body.put("status", "FAILURE");
             }
+            sendEventToLedger(body);
             return null;
         });
     }
@@ -226,6 +229,14 @@ public class EthManager {
                     .ethGetBalance(address, DefaultBlockParameterName.LATEST)
                     .send()
                     .getBalance();
+
+            HashMap<String, Object> body = new HashMap<>();
+            body.put("action_type", "COIN_BALANCE");
+            body.put("wallet_address", address);
+            body.put("balance", BalanceUtils.weiToEth(valueInWei));
+            sendEventToLedger(body);
+
+
             return BalanceUtils.weiToEth(valueInWei);
         });
     }
@@ -265,9 +276,11 @@ public class EthManager {
                     Uint256 tokenBalance = contract.balanceOf(address);
 
                     HashMap<String, Object> body = new HashMap<>();
-                    body.put("action_type", "GET_TOKEN_BALANCE");
-                    body.put("message", "TEST");
+                    body.put("action_type", "TOKEN_BALANCE");
+                    body.put("wallet_address", address);
+                    body.put("balance", BalanceUtils.weiToEth(tokenBalance.getValue()));
                     sendEventToLedger(body);
+
 
                     return Single.just(BalanceUtils.weiToEth(tokenBalance.getValue()));
                 });
@@ -299,7 +312,14 @@ public class EthManager {
 
                     HashMap<String, Object> body = new HashMap<>();
                     body.put("action_type", "SEND_ETHER");
-                    body.put("message", "TEST");
+                    body.put("from_wallet_address", walletAddress);
+                    body.put("to_wallet_address", to_Address);
+                    body.put("amount", etherAmount.toPlainString());
+                    body.put("tx_hash", transactionHash);
+                    body.put("gasLimit", gasLimit.toString());
+                    body.put("gasPrice", gasPrice.toString());
+                    body.put("fee", gasLimit.multiply(gasPrice).toString());
+                    body.put("status", "SUCCESS");
                     sendEventToLedger(body);
 
 
@@ -328,9 +348,16 @@ public class EthManager {
 
                     HashMap<String, Object> body = new HashMap<>();
                     body.put("action_type", "SEND_TOKEN");
-                    body.put("message", "TEST");
+                    body.put("from_wallet_address", walletAddress);
+                    body.put("to_wallet_address", to_Address);
+                    body.put("amount", tokenAmount.toPlainString());
+                    body.put("tx_hash", mReceipt.getTransactionHash());
+                    body.put("gasLimit", gasLimit.toString());
+                    body.put("gasPrice", gasPrice.toString());
+                    body.put("fee", gasLimit.multiply(gasPrice).toString());
+                    body.put("token_smart_contract", tokenContractAddress);
+                    body.put("status", "SUCCESS");
                     sendEventToLedger(body);
-
 
                     return Single.just(mReceipt);
                 });
