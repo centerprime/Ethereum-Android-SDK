@@ -330,7 +330,7 @@ public class EthManager {
     /**
      * Send Token
      */
-    public Single<TransactionReceipt> sendToken(String walletAddress, String password,
+    public Single<String> sendToken(String walletAddress, String password,
                                                 BigInteger gasPrice,
                                                 BigInteger gasLimit,
                                                 BigDecimal tokenAmount,
@@ -359,7 +359,7 @@ public class EthManager {
                     body.put("status", "SUCCESS");
                     sendEventToLedger(body);
 
-                    return Single.just(mReceipt);
+                    return Single.just(mReceipt.getTransactionHash());
                 });
     }
 
