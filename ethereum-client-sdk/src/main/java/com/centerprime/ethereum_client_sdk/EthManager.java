@@ -277,7 +277,7 @@ public class EthManager {
 
                     HashMap<String, Object> body = new HashMap<>();
                     body.put("action_type", "TOKEN_BALANCE");
-                    body.put("wallet_address", address);
+                    body.put("wallet_address", walletAddress);
                     body.put("balance", BalanceUtils.weiToEth(tokenBalance.getValue()));
                     sendEventToLedger(body);
 
