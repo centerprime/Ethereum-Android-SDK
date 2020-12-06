@@ -269,7 +269,7 @@ public class EthManager {
                 .flatMap(credentials -> {
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, ChainId.MAINNET, transactionReceiptProcessor);
+                            web3j, credentials, ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j,
                             transactionManager, BigInteger.ZERO, BigInteger.ZERO);
                     Address address = new Address(walletAddress);
@@ -342,7 +342,7 @@ public class EthManager {
                     BigDecimal formattedAmount = BalanceUtils.ethToWei(tokenAmount);
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, ChainId.MAINNET, transactionReceiptProcessor);
+                            web3j, credentials, ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j, transactionManager, gasPrice, gasLimit);
                     TransactionReceipt mReceipt = contract.transfer(new Address(to_Address), new Uint256(formattedAmount.toBigInteger()));
 
