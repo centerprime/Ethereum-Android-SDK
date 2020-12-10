@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.centerprime.ethereum_client_sdk.EthManager;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -23,6 +26,16 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(wallet -> {
                     String walletAddress = wallet.getAddress();
                     String keystore = wallet.getKeystore();
+
+                    ethManager.sendEther(walletAddress, password, new BigInteger("30000000000"), BigInteger.valueOf(21000), BigDecimal.valueOf(1), "0x3dF4F80A1592a125742EF7d69C24CC3F8306AFd8",this)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(t -> {
+                                System.out.println(t);
+                            }, error -> {
+                               error.printStackTrace();
+                            });
+
                 }, error -> {
                     error.printStackTrace();
                 });
@@ -33,5 +46,7 @@ public class MainActivity extends AppCompatActivity {
 //                .subscribe(va -> {
 //                    va.toBigInteger();
 //                });
+
+
     }
 }
