@@ -59,6 +59,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by CenterPrime on 2020/09/19.
  */
+
 public class EthManager {
     private static final EthManager ourInstance = new EthManager();
 
@@ -279,7 +280,7 @@ public class EthManager {
 
                     HashMap<String, Object> body = new HashMap<>();
                     body.put("action_type", "TOKEN_BALANCE");
-                    body.put("wallet_address", address);
+                    body.put("wallet_address", walletAddress);
                     body.put("balance", BalanceUtils.weiToEth(tokenBalance.getValue()));
                     sendEventToLedger(body, context);
 
@@ -332,7 +333,7 @@ public class EthManager {
     /**
      * Send Token
      */
-    public Single<TransactionReceipt> sendToken(String walletAddress, String password,
+    public Single<String> sendToken(String walletAddress, String password,
                                                 BigInteger gasPrice,
                                                 BigInteger gasLimit,
                                                 BigDecimal tokenAmount,
@@ -361,7 +362,7 @@ public class EthManager {
                     body.put("status", "SUCCESS");
                     sendEventToLedger(body, context);
 
-                    return Single.just(mReceipt);
+                    return Single.just(mReceipt.getTransactionHash());
                 });
     }
 
