@@ -1,4 +1,4 @@
-# Ethereum Client SDK 
+# Ethereum Android SDK 
 
 
 ## Table of Contents
