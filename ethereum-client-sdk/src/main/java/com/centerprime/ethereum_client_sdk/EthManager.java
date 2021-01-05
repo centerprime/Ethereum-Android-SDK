@@ -238,6 +238,7 @@ public class EthManager {
             body.put("wallet_address", address);
             body.put("network" , isMainNet() ? "MAINNET" : "TESTNET");
             body.put("balance", BalanceUtils.weiToEth(valueInWei));
+            body.put("status", "SUCCESS");
             sendEventToLedger(body, context);
 
 
@@ -290,6 +291,7 @@ public class EthManager {
                     body.put("token_name" , tokenName);
                     body.put("token_symbol" , tokenSymbol);
                     body.put("balance", BalanceUtils.weiToEth(tokenBalance.getValue()));
+                    body.put("status", "SUCCESS");
                     sendEventToLedger(body, context);
 
 
