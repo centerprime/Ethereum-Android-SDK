@@ -268,12 +268,12 @@ public class EthManager {
     /**
      * Get ERC20 Token Balance of Wallet
      */
-    public Single<BigDecimal> getTokenBalance(String walletAddress, String password, String tokenContractAddress, Context context, int chainId) {
+    public Single<BigDecimal> getTokenBalance(String walletAddress, String password, String tokenContractAddress, Context context) {
         return loadCredentials(walletAddress, password, context)
                 .flatMap(credentials -> {
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, chainId == 1 ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
+                            web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j,
                             transactionManager, BigInteger.ZERO, BigInteger.ZERO);
                     Address address = new Address(walletAddress);
@@ -348,14 +348,13 @@ public class EthManager {
                                                 BigDecimal tokenAmount,
                                                 String to_Address,
                                                 String tokenContractAddress,
-                                                Context context,
-                                                int chainID) {
+                                                Context context) {
         return loadCredentials(walletAddress, password, context)
                 .flatMap(credentials -> {
                     BigDecimal formattedAmount = BalanceUtils.ethToWei(tokenAmount);
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, chainID == 1 ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
+                            web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j, transactionManager, gasPrice, gasLimit);
                     TransactionReceipt mReceipt = contract.transfer(new Address(to_Address), new Uint256(formattedAmount.toBigInteger()));
 
