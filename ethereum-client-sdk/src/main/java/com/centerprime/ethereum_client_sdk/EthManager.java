@@ -162,6 +162,34 @@ public class EthManager {
     }
 
     /**
+     * Export Keystore by wallet address
+     */
+    public Single<String> exportKeyStore(String walletAddress, Context context) {
+        return Single.fromCallable(() -> {
+            String wallet = walletAddress;
+            if (wallet.startsWith("0x")) {
+                wallet = wallet.substring(2);
+            }
+            String walletPath = context.getFilesDir() + "/" + wallet.toLowerCase();
+            File keystoreFile = new File(walletPath);
+            HashMap<String, Object> body = new HashMap<>();
+            if (keystoreFile.exists()) {
+
+                body.put("action_type", "WALLET_EXPORT_KEYSTORE");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "SUCCESS");
+                sendEventToLedger(body, context);
+                return read_file(context, keystoreFile.getName());
+            } else {
+                body.put("action_type", "WALLET_EXPORT_KEYSTORE");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "FAILURE");
+                throw new Exception("Keystore is NULL");
+            }
+        });
+    }
+
+    /**
      * Import Wallet by Keystore
      */
     public Single<String> importFromKeystore(String keystore, String password, Context context) {
@@ -219,6 +247,11 @@ public class EthManager {
         return loadCredentials(walletAddress, password, context)
                 .flatMap(credentials -> {
                     String privateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
+                    HashMap<String, Object> body = new HashMap<>();
+                    body.put("action_type", "WALLET_EXPORT_PRIVATE_KEY");
+                    body.put("wallet_address", walletAddress);
+                    body.put("status", "SUCCESS");
+                    sendEventToLedger(body, context);
                     return Single.just(privateKey);
                 });
     }
