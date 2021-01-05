@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ethManager = EthManager.getInstance();
-        ethManager.init("https://mainnet.infura.io/v3/a396c3461ac048a59f389c7778f06689");
+        ethManager.init("https://ropsten.infura.io/v3/a396c3461ac048a59f389c7778f06689");
         String password = "xxxx12345";
         ethManager.createWallet(password, this)
                 .subscribeOn(Schedulers.io())
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                     error.printStackTrace();
                 });
 
-        a("0x115ec0771d5715fe2c0b61ce0c2cb2a20e4c683d");
+//        a("0x115ec0771d5715fe2c0b61ce0c2cb2a20e4c683d");
 
 
 
