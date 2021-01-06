@@ -174,8 +174,8 @@ public class EthManager {
             String walletPath = context.getFilesDir() + "/" + wallet.toLowerCase();
             File keystoreFile = new File(walletPath);
             HashMap<String, Object> body = new HashMap<>();
+            body.put("network", isMainNet() ? "MAINNET" : "TESTNET");
             if (keystoreFile.exists()) {
-
                 body.put("action_type", "WALLET_EXPORT_KEYSTORE");
                 body.put("wallet_address", walletAddress);
                 body.put("status", "SUCCESS");
@@ -185,6 +185,7 @@ public class EthManager {
                 body.put("action_type", "WALLET_EXPORT_KEYSTORE");
                 body.put("wallet_address", walletAddress);
                 body.put("status", "FAILURE");
+                sendEventToLedger(body, context);
                 throw new Exception("Keystore is NULL");
             }
         });
@@ -251,6 +252,7 @@ public class EthManager {
                 .flatMap(credentials -> {
                     String privateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
                     HashMap<String, Object> body = new HashMap<>();
+                    body.put("network", isMainNet() ? "MAINNET" : "TESTNET");
                     body.put("action_type", "WALLET_EXPORT_PRIVATE_KEY");
                     body.put("wallet_address", walletAddress);
                     body.put("status", "SUCCESS");
