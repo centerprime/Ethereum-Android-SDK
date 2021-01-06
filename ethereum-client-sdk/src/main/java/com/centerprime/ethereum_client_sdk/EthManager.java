@@ -163,6 +163,34 @@ public class EthManager {
     }
 
     /**
+     * Export Keystore by wallet address
+     */
+    public Single<String> exportKeyStore(String walletAddress, Context context) {
+        return Single.fromCallable(() -> {
+            String wallet = walletAddress;
+            if (wallet.startsWith("0x")) {
+                wallet = wallet.substring(2);
+            }
+            String walletPath = context.getFilesDir() + "/" + wallet.toLowerCase();
+            File keystoreFile = new File(walletPath);
+            HashMap<String, Object> body = new HashMap<>();
+            if (keystoreFile.exists()) {
+
+                body.put("action_type", "WALLET_EXPORT_KEYSTORE");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "SUCCESS");
+                sendEventToLedger(body, context);
+                return read_file(context, keystoreFile.getName());
+            } else {
+                body.put("action_type", "WALLET_EXPORT_KEYSTORE");
+                body.put("wallet_address", walletAddress);
+                body.put("status", "FAILURE");
+                throw new Exception("Keystore is NULL");
+            }
+        });
+    }
+
+    /**
      * Import Wallet by Keystore
      */
     public Single<String> importFromKeystore(String keystore, String password, Context context) {
@@ -222,6 +250,11 @@ public class EthManager {
         return loadCredentials(walletAddress, password, context)
                 .flatMap(credentials -> {
                     String privateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
+                    HashMap<String, Object> body = new HashMap<>();
+                    body.put("action_type", "WALLET_EXPORT_PRIVATE_KEY");
+                    body.put("wallet_address", walletAddress);
+                    body.put("status", "SUCCESS");
+                    sendEventToLedger(body, context);
                     return Single.just(privateKey);
                 });
     }
@@ -241,6 +274,7 @@ public class EthManager {
             body.put("wallet_address", address);
             body.put("network" , isMainNet() ? "MAINNET" : "TESTNET");
             body.put("balance", BalanceUtils.weiToEth(valueInWei));
+            body.put("status", "SUCCESS");
             sendEventToLedger(body, context);
 
 
@@ -276,7 +310,7 @@ public class EthManager {
                 .flatMap(credentials -> {
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, ChainId.MAINNET, transactionReceiptProcessor);
+                            web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j,
                             transactionManager, BigInteger.ZERO, BigInteger.ZERO);
                     Address address = new Address(walletAddress);
@@ -293,6 +327,7 @@ public class EthManager {
                     body.put("token_name" , tokenName);
                     body.put("token_symbol" , tokenSymbol);
                     body.put("balance", BalanceUtils.weiToEth(tokenBalance.getValue()));
+                    body.put("status", "SUCCESS");
                     sendEventToLedger(body, context);
 
 
@@ -357,7 +392,7 @@ public class EthManager {
                     BigDecimal formattedAmount = BalanceUtils.ethToWei(tokenAmount);
                     TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
                     TransactionManager transactionManager = new RawTransactionManager(
-                            web3j, credentials, ChainId.MAINNET, transactionReceiptProcessor);
+                            web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(tokenContractAddress, web3j, transactionManager, gasPrice, gasLimit);
                     TransactionReceipt mReceipt = contract.transfer(new Address(to_Address), new Uint256(formattedAmount.toBigInteger()));
 
