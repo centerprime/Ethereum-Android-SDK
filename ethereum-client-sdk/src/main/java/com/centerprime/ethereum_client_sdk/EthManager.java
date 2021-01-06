@@ -121,6 +121,7 @@ public class EthManager {
     public Single<Wallet> createWallet(String password, Context context) {
         return Single.fromCallable(() -> {
             HashMap<String, Object> body = new HashMap<>();
+            body.put("network" , isMainNet() ? "MAINNET" : "TESTNET");
             try {
 
                 String walletAddress = CenterPrimeUtils.generateNewWalletFile(password, new File(context.getFilesDir(), ""), false);
@@ -167,6 +168,7 @@ public class EthManager {
     public Single<String> importFromKeystore(String keystore, String password, Context context) {
         return Single.fromCallable(() -> {
             HashMap<String, Object> body = new HashMap<>();
+            body.put("network" , isMainNet() ? "MAINNET" : "TESTNET");
             try {
                 Credentials credentials = CenterPrimeUtils.loadCredentials(password, keystore);
                 String walletAddress = CenterPrimeUtils.generateWalletFile(password, credentials.getEcKeyPair(), new File(context.getFilesDir(), ""), false);
@@ -191,6 +193,7 @@ public class EthManager {
     public Single<String> importFromPrivateKey(String privateKey, Context context) {
         return Single.fromCallable(() -> {
             HashMap<String, Object> body = new HashMap<>();
+            body.put("network" , isMainNet() ? "MAINNET" : "TESTNET");
             String password = "";
             // Decode private key
             ECKeyPair keys = ECKeyPair.create(Hex.decode(privateKey));
