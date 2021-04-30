@@ -10,6 +10,7 @@ import com.centerprime.ethereum_client_sdk.util.Const;
 import com.centerprime.ethereum_client_sdk.util.Erc20TokenWrapper;
 import com.centerprime.ethereum_client_sdk.util.HyperLedgerApi;
 import com.centerprime.ethereum_client_sdk.util.SubmitTransactionModel;
+import com.centerprime.ethereum_client_sdk.util.Token;
 import com.centerprime.ethereum_client_sdk.util.Wallet;
 import com.google.gson.Gson;
 
@@ -48,6 +49,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
+
+
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -303,7 +306,26 @@ public class EthManager {
                     }
                 });
     }
+    /**
+     * Add Custom Token
+     */
+    public Single<Token> searchTokenByContractAddress(String contractAddress, String walletAddress, String password, Context context) {
+        return loadCredentials(walletAddress, password, context)
+                .flatMap(credentials -> {
+                    TransactionReceiptProcessor transactionReceiptProcessor = new NoOpProcessor(web3j);
+                    TransactionManager transactionManager = new RawTransactionManager(
+                            web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
+                    Erc20TokenWrapper contract = Erc20TokenWrapper.load(contractAddress, web3j,
+                            transactionManager, BigInteger.ZERO, BigInteger.ZERO);
 
+                    String tokenName = contract.name().getValue();
+                    String tokenSymbol = contract.symbol().getValue();
+                    BigInteger decimalCount = contract.decimals().getValue();
+
+                    return Single.just(new Token(contractAddress, tokenSymbol, tokenName, decimalCount.toString()));
+                });
+
+    }
     /**
      * Get ERC20 Token Balance of Wallet
      */
@@ -380,6 +402,8 @@ public class EthManager {
                     return Single.just(transactionHash);
                 });
     }
+
+
 
     /**
      * Send Token
