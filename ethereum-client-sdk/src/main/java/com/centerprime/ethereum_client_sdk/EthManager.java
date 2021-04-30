@@ -317,7 +317,6 @@ public class EthManager {
                             web3j, credentials, isMainNet() ? ChainId.MAINNET : ChainId.ROPSTEN, transactionReceiptProcessor);
                     Erc20TokenWrapper contract = Erc20TokenWrapper.load(contractAddress, web3j,
                             transactionManager, BigInteger.ZERO, BigInteger.ZERO);
-
                     String tokenName = contract.name().getValue();
                     String tokenSymbol = contract.symbol().getValue();
                     BigInteger decimalCount = contract.decimals().getValue();
